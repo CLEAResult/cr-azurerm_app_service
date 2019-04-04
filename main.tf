@@ -27,4 +27,7 @@ app_settings {
       "index.php"
     ]
   }
+  tags {
+    InfrastructureAsCode = "True"
+  }
 }
