@@ -28,6 +28,20 @@ variable "rg_name" {
   description = "Resource group name"
 }
 
+variable "fx" {
+  default = "PHP"
+  description = "Used for Linux web app framework selection - ignored on Windows web apps.  Default is PHP. Valid options are shown in the templates at https://github.com/terraform-providers/terraform-provider-azurerm/tree/master/examples/app-service."
+}
+variable "fx_version" {
+  default = "7.2"
+  description = "Used for Linux web app framework selection - ignored on Windows web apps.  Valid values refer to PHP or NodeJS version, or can specify a Docker hub path and version tag."
+}
+
+variable "win_php_version" {
+  default = "7.2"
+  description = "Used to select Windows web app PHP version.  Valid values are 5.6, 7.0, 7.1, or 7.2.  Default is 7.2."
+}
+
 # Compute default name values
 locals {
   env_id              = "${lookup(module.naming.env-map, var.environment, "ENV")}"

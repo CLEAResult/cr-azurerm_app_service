@@ -20,8 +20,8 @@ app_settings {
   https_only = "true"
   site_config {
     always_on = "true"
-    php_version = "7.2"
-    linux_fx_version = "PHP|7.2"
+    php_version = "${var.win_php_version}"
+    linux_fx_version = "${var.fx}|${var.fx_version}"
     default_documents = [
       "index.html",
       "index.php"
