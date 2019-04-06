@@ -31,3 +31,20 @@ app_settings {
     InfrastructureAsCode = "True"
   }
 }
+
+# add site extension via ARM template
+resource "azurerm_template_deployment" "extension" {
+  name                = "${local.name}-armdeploy"
+  resource_group_name = "${var.rg_name}"
+
+  template_body = "${file("./azuredeploy.json")}"
+
+  # these key-value pairs are passed into the ARM Template's `parameters` block
+  parameters = {
+    "siteName"          = "${local.name}"
+    "extensionName"     = "SecurityPackHttpsRedirectPlusHeadersMed"
+    "extensionVersion"  = "1.1.6"
+  }
+
+  deployment_mode = "Incremental"
+}
