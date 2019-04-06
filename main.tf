@@ -51,5 +51,5 @@ resource "azurerm_template_deployment" "extension" {
   }
 
   deployment_mode = "Incremental"
-  depends_on      = "[azurerm_app_service.app]"
+  depends_on      = ["azurerm_app_service.app"]
 }
