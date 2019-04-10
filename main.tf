@@ -6,6 +6,10 @@ resource "azurerm_app_service" "app" {
   app_service_plan_id = "${var.plan}"
   enabled             = "true"
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   app_settings {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
   }
