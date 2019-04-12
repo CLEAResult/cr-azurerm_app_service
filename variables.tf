@@ -53,10 +53,10 @@ locals {
   default_name_prefix = "c${local.default_rgid}${local.env_id}"
 
   name_prefix = "${var.name_prefix != "" ? var.name_prefix : local.default_name_prefix}"
-  name        = "${local.name_prefix}${local.type}001"
+  name        = "${local.name_prefix}${local.type}"
 }
 
 # This module provides a data map output to lookup naming standard references
 module "naming" {
-  source = "git::ssh://git@github.com/clearesult/cr-azurerm-naming.git?ref=v1.0"
+  source = "git::https://github.com/CLEAResult/cr-azurerm-naming.git?ref=v1.0.1"
 }

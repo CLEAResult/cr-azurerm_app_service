@@ -1,6 +1,6 @@
 resource "azurerm_app_service" "app" {
-  count               = "${var.count != "" ? var.count : "1"}"
-  name                = "${local.name}"
+  name                = "${local.name}${format("%03d", count.index + 1)}"
+  count               = "${var.count}"
   location            = "${var.location}"
   resource_group_name = "${var.rg_name}"
   app_service_plan_id = "${var.plan}"
