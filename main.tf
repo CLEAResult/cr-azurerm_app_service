@@ -42,14 +42,14 @@ resource "azurerm_app_service" "app" {
 
 # add site extension via ARM template
 resource "azurerm_template_deployment" "extension" {
-  name                = "${local.name}-armdeploy"
+  name                = "${azurerm_app_service.app.name}-deploy"
   resource_group_name = "${var.rg_name}"
 
   template_body = "${file("${path.module}/azuredeploy.json")}"
 
   # these key-value pairs are passed into the ARM Template's `parameters` block
   parameters = {
-    "siteName"         = "${local.name}"
+    "siteName"         = "${azurerm_app_service.app.name}"
     "extensionName"    = "SecurityPackHttpsRedirectPlusHeadersMed"
     "extensionVersion" = "1.1.6"
   }
