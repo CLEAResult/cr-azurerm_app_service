@@ -57,3 +57,13 @@ resource "azurerm_template_deployment" "extension" {
   deployment_mode = "Incremental"
   depends_on      = ["azurerm_app_service.app"]
 }
+
+resource "azuread_group" "WebsiteContributor" {
+  name = "g${local.default_rgid}${local.env_id}${local.rg_type}_AZ_WebsiteContributor"
+}
+
+resource "azurerm_role_assignment" "WebsiteContributor" {
+  scope                = "/subscriptions/${var.subscription_id}/resourceGroups/${var.rg_name}"
+  role_definition_name = "Website Contributor"
+  principal_id         = "${azuread_group.WebsiteContributor.id}"
+}

@@ -17,3 +17,7 @@ output "msi_principal_id" {
 output "msi_tenant_id" {
   value = ["${azurerm_app_service.app.identity.0.tenant_id}"]
 }
+
+output "appServiceName" {
+  value = ["${azurerm_app_service.app.*.name}"]
+}
