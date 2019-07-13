@@ -48,6 +48,15 @@ variable "subscription_id" {
   description = "Prompt for subscription ID"
 }
 
+variable "http2_enabled" {
+  description = "Is HTTP2 Enabled on this App Service? Defaults to false."
+}
+
+variable "ftps_state" {
+  description = "State of FTP / FTPS service for this App Service. Possible values include: AllAllowed, FtpsOnly and Disabled."
+  default = "FtpsOnly"
+}
+
 # Compute default name values
 locals {
   env_id = lookup(module.naming.env-map, var.environment, "env")

@@ -28,6 +28,8 @@ resource "azurerm_app_service" "app" {
     always_on        = "true"
     php_version      = var.win_php_version
     linux_fx_version = format("%s%s", var.fx, var.fx_version)
+    http2_enabled    = var.http2_enabled
+    ftps_state       = var.ftps_state
 
     default_documents = [
       "index.html",
