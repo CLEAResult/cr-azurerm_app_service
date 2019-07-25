@@ -12,7 +12,12 @@ variable "plan" {
 }
 
 variable "num" {
-  default = "1"
+  default = 1
+}
+
+variable "slot_num" {
+  default = 0
+  description = "If set to a number greater than 0, create that many slots with generated names and the same configuration as the app. For now, this feature only support creating a slot on the first app service count (index 0).  If var.num is greater than 1, all slots will still be created on the index 0 app."
 }
 
 variable "name_prefix" {

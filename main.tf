@@ -19,6 +19,7 @@ resource "azurerm_app_service" "app" {
       id,
       app_service_plan_id,
       tags,
+      app_settings,
     ]
   }
 
