@@ -24,9 +24,16 @@ variable "rg_name" {
   default = "resourcegroupname"
 }
 
-module "web" {
-  source = "git::ssh://git@github.com/clearesult/cr-azurerm_app_service.git"
-  rg_name = "${var.rg_name}"
-  plan = "${var.plan}"
+module "appservice" {
+  source          = "git::ssh://git@github.com/clearesult/cr-azurerm_app_service.git"
+  rg_name         = var.rg_name
+  rgid            = var.rgid
+  environment     = var.environment
+  location        = var.location
+  num             = 1
+  slot_num        = var.slot_num
+  plan            = var.plan
+  subscription_id = var.subscription_id
+  http2_enabled   = var.http2_enabled
 }
 ```
