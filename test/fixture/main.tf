@@ -9,11 +9,11 @@ resource "random_id" "name" {
 provider "azurerm" {
   subscription_id = var.subscription_id
   tenant_id       = var.tenant_id
-  version         = "~> 1.31.0"
+  version         = "~> 1.32.0"
 }
 
 provider "azuread" {
-  version = "~> 0.3.1"
+  version = "~> 0.5.1"
 }
 
 module "rg" {

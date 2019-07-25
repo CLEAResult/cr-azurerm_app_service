@@ -4,7 +4,7 @@ resource "azurerm_app_service_slot" "app" {
   location            = var.location
   resource_group_name = var.rg_name
   app_service_plan_id = var.plan
-  app_service_name    = azurerm_app_service.app[0].name
+  app_service_name    = basename(azurerm_app_service.app[0].id)
   enabled             = "true"
 
   identity {
