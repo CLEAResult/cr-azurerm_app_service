@@ -15,18 +15,16 @@ Also, the location variable must match the location where the plan exists. Other
 
 # Example
 
+For a complete example, review the files in `test/fixture`.
+
 ```
 variable "plan" {
   default = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourcegroupname/providers/Microsoft.Web/serverfarms/planname"
 }
 
-variable "rg_name" {
-  default = "resourcegroupname"
-}
-
 module "appservice" {
   source          = "git::ssh://git@github.com/clearesult/cr-azurerm_app_service.git"
-  rg_name         = var.rg_name
+  rg_name         = basename(module.rg.id)
   rgid            = var.rgid
   environment     = var.environment
   location        = var.location
@@ -35,5 +33,24 @@ module "appservice" {
   plan            = var.plan
   subscription_id = var.subscription_id
   http2_enabled   = var.http2_enabled
+
+  storage_accounts = [
+    {
+      name         = "data"
+      type         = "AzureBlob"
+      account_name = azurerm_storage_account.test.name
+      share_name   = azurerm_storage_container.test.name
+      access_key   = azurerm_storage_account.test.primary_access_key
+      mount_path   = "/var/data"
+    },
+    {
+      name         = "files"
+      type         = "AzureFiles"
+      account_name = azurerm_storage_account.test.name
+      share_name   = azurerm_storage_share.test.name
+      access_key   = azurerm_storage_account.test.primary_access_key
+      mount_path   = "/var/files"
+    }
+  ]
 }
 ```

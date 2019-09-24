@@ -25,6 +25,18 @@ resource "azurerm_app_service" "app" {
 
   https_only = "true"
 
+  dynamic "storage_account" {
+    for_each = var.storage_accounts 
+    content {
+      name         = storage_account.value.name
+      type         = storage_account.value.type
+      account_name = storage_account.value.account_name
+      share_name   = storage_account.value.share_name
+      access_key   = storage_account.value.access_key
+      mount_path   = storage_account.value.mount_path
+    }
+  }
+
   site_config {
     always_on        = "true"
     php_version      = var.win_php_version

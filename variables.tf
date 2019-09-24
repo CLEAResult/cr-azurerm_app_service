@@ -62,6 +62,17 @@ variable "ftps_state" {
   default = "FtpsOnly"
 }
 
+variable "storage_accounts" {
+  type = list(object({
+    name         = string
+    type         = string
+    account_name = string
+    share_name   = string
+    access_key   = string
+    mount_path   = string
+  }))
+}
+
 # Compute default name values
 locals {
   env_id = lookup(module.naming.env-map, var.environment, "env")
