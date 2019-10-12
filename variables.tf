@@ -179,7 +179,8 @@ locals {
   }
 
   secure_app_settings = var.secret_name != "" && var.key_vault_id != "" ? {
-    replace(var.secret_name, "-", "_") = format("@Microsoft.KeyVault(SecretUri=%s)", data.azurerm_key_vault_secret.app.id)
+    for secret in data.azurerm_key_vault_secret.app:
+    replace(secret.name, "-", "_") => format("@Microsoft.KeyVault(SecretUri=%s)", secret.id)
   } : {}
 }
 

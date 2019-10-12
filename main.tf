@@ -66,9 +66,15 @@ resource "azurerm_role_assignment" "WebsiteContributor" {
 
 # Used to work around BadRequest error if linux_fx_version is not empty on a
 # Windows app service plan
-data "azurerm_app_service_plan" "test" {
+data "azurerm_app_service_plan" "app" {
   name                = local.plan_name
   resource_group_name = local.plan_rg
+}
+
+data "azurerm_key_vault_secret" "app" {
+  count               = var.secret_name != "" && var.key_vault_id != "" ? 1 : 0
+  name                = var.secret_name
+  key_vault_id        = var.key_vault_id
 }
 
 data "azurerm_client_config" "current" {}
