@@ -21,4 +21,3 @@ output "msi_tenant_id" {
 output "appServiceName" {
   value = azurerm_app_service.app.*.name
 }
-

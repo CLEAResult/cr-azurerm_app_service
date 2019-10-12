@@ -3,16 +3,14 @@ resource "azurerm_app_service" "app" {
   count               = var.num
   location            = var.location
   resource_group_name = var.rg_name
-  app_service_plan_id = var.plan
+  app_service_plan_id = local.plan
   enabled             = "true"
 
   identity {
     type = "SystemAssigned"
   }
 
-  app_settings = {
-    WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
-  }
+  app_settings = merge(var.app_settings, local.secure_app_settings, local.app_settings)
 
   lifecycle {
     ignore_changes = [
@@ -39,8 +37,9 @@ resource "azurerm_app_service" "app" {
 
   site_config {
     always_on        = "true"
+    app_command_line = var.command
     php_version      = var.win_php_version
-    linux_fx_version = format("%s%s", var.fx, var.fx_version)
+    linux_fx_version = local.linux_fx_version
     http2_enabled    = var.http2_enabled
     ftps_state       = var.ftps_state
 
@@ -50,9 +49,9 @@ resource "azurerm_app_service" "app" {
     ]
   }
 
-  tags = {
+  tags = merge({
     InfrastructureAsCode = "True"
-  }
+  }, var.tags)
 }
 
 resource "azuread_group" "WebsiteContributor" {
@@ -65,3 +64,11 @@ resource "azurerm_role_assignment" "WebsiteContributor" {
   principal_id         = azuread_group.WebsiteContributor.id
 }
 
+# Used to work around BadRequest error if linux_fx_version is not empty on a
+# Windows app service plan
+data "azurerm_app_service_plan" "test" {
+  name                = local.plan_name
+  resource_group_name = local.plan_rg
+}
+
+data "azurerm_client_config" "current" {}

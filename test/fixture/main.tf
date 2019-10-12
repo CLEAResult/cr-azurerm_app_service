@@ -12,7 +12,7 @@ resource "random_string" "test" {
 provider "azurerm" {
   subscription_id = var.subscription_id
   tenant_id       = var.tenant_id
-  version         = "~> 1.34.0"
+  version         = "~> 1.35.0"
 }
 
 provider "azuread" {
@@ -20,7 +20,7 @@ provider "azuread" {
 }
 
 module "rg" {
-  source          = "git::https://github.com/clearesult/cr-azurerm_resource_group.git?ref=v1.2.1"
+  source          = "git::https://github.com/clearesult/cr-azurerm_resource_group.git?ref=v1.2.2"
   rgid            = var.rgid
   environment     = var.environment
   location        = var.location
@@ -28,56 +28,34 @@ module "rg" {
   subscription_id = var.subscription_id
 }
 
-module "appservice" {
-  source          = "../.."
-  rg_name         = basename(module.rg.id)
-  rgid            = var.rgid
-  environment     = var.environment
-  location        = var.location
-  num             = 1
-  slot_num        = var.slot_num
-  plan            = var.plan
-  subscription_id = var.subscription_id
-  http2_enabled   = var.http2_enabled
+resource "azurerm_key_vault" "test" {
+  name                        = format("vault%s", random_string.test.result)
+  location                    = var.location
+  resource_group_name         = basename(module.rg.id)
+  enabled_for_disk_encryption = true
+  tenant_id                   = var.tenant_id
 
-  storage_accounts = [
-    {
-      name         = "data"
-      type         = "AzureBlob"
-      account_name = azurerm_storage_account.test.name
-      share_name   = azurerm_storage_container.test.name
-      access_key   = azurerm_storage_account.test.primary_access_key
-      mount_path   = "/var/data"
-    },
-    {
-      name         = "files"
-      type         = "AzureFiles"
-      account_name = azurerm_storage_account.test.name
-      share_name   = azurerm_storage_share.test.name
-      access_key   = azurerm_storage_account.test.primary_access_key
-      mount_path   = "/var/files"
-    }
-  ]
+  sku_name = "standard"
+
+  #network_acls {
+  #  default_action = "Deny"
+  #  bypass         = "AzureServices"
+  #}
 }
 
-resource "azurerm_storage_account" "test" {
-  name                     = format("sa%s", random_string.test.result)
-  resource_group_name      = basename(module.rg.id)
-  location                 = var.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
+resource "azurerm_key_vault_access_policy" "test" {
+  count              = var.secret_name != "" ? 1 : 0
+  key_vault_id       = azurerm_key_vault.test.id
+  tenant_id          = data.azurerm_client_config.current.tenant_id
+  object_id          = data.azurerm_client_config.current.service_principal_object_id
+  secret_permissions = ["get", "set"]
 }
 
-resource "azurerm_storage_container" "test" {
-  name                  = "data"
-  resource_group_name   = basename(module.rg.id)
-  storage_account_name  = azurerm_storage_account.test.name
-  container_access_type = "private"
+resource "azurerm_key_vault_secret" "test" {
+  key_vault_id = azurerm_key_vault.test.id
+  name         = var.secret_name
+  value        = "secretvalue"
+  depends_on   = [azurerm_key_vault_access_policy.test]
 }
 
-resource "azurerm_storage_share" "test" {
-  name                 = "files"
-  storage_account_name = azurerm_storage_account.test.name
-  quota                = 50
-}
-
+data "azurerm_client_config" "current" {}

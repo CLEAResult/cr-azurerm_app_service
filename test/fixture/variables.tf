@@ -2,10 +2,6 @@ variable "resource_group_name" {}
 
 variable "rgid" {}
 
-variable "plan" {
-  description = "Azure App Service Plan resource ID (must already exist)"
-}
-
 variable "environment" {}
 
 variable "location" {}
@@ -21,4 +17,6 @@ variable "http2_enabled" {
 }
 
 variable "slot_num" {}
+
+variable "secret_name" {}
 
