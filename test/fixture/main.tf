@@ -47,7 +47,7 @@ resource "azurerm_key_vault_access_policy" "test" {
   count              = var.secret_name != "" ? 1 : 0
   key_vault_id       = azurerm_key_vault.test.id
   tenant_id          = data.azurerm_client_config.current.tenant_id
-  object_id          = data.azurerm_client_config.current.service_principal_object_id
+  object_id          = "SET ME - requires service principal ID or MSI"
   secret_permissions = ["get", "set"]
 }
 

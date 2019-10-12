@@ -15,6 +15,10 @@ output "webapp_id" {
   value = module.linux_appservice.*.id
 }
 
+output "windows_webapp_id" {
+  value = module.windows_appservice.*.id
+}
+
 output "webapp_app_service_default_url" {
   value = module.linux_appservice.*.app_service_default_url
 }
