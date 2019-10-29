@@ -2,6 +2,9 @@
 
 Creates an azure app service web app on an existing app service plan.
 
+This module is being updated relatively frequently and may be fragile 
+to unexpected inputs.  Reference the test fixture.
+
 # Required Input Variables
 
 * `plan` - Azure app service plan resource ID full path
