@@ -121,6 +121,18 @@ variable "docker_registry_password" {
   description = "The container registry password."
 }
 
+variable "azure_registry_name" {
+  type        = string
+  default     = ""
+  description = "The container registry name if using Azure Container Registry. Used with azure_registry_rg, will fill in the user/password using a terraform data source."
+}
+
+variable "azure_registry_rg" {
+  type        = string
+  default     = ""
+  description = "The container registry resource group name if using Azure Container Registry. Used with azure_registry_name, will fill in the user/password using a terraform data source."
+}
+
 variable "start_time_limit" {
   type        = number
   default     = 230
@@ -169,13 +181,17 @@ locals {
 
   linux_fx_version = data.azurerm_app_service_plan.app.kind == "Windows" ? "" : format("%s%s", var.fx, var.fx_version)
 
+  docker_registry_url  = var.docker_registry_url != "" ? var.docker_registry_url : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].login_server : ""
+  docker_registry_username  = var.docker_registry_username != "" ? var.docker_registry_username : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].admin_username : ""
+  docker_registry_password  = var.docker_registry_password != "" ? var.docker_registry_password : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].admin_password : ""
+    
   app_settings = {
     "WEBSITES_CONTAINER_START_TIME_LIMIT" = var.start_time_limit
     "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = var.enable_storage
     "WEBSITES_PORT"                       = var.port
-    "DOCKER_REGISTRY_SERVER_USERNAME"     = var.docker_registry_username
-    "DOCKER_REGISTRY_SERVER_URL"          = var.docker_registry_url
-    "DOCKER_REGISTRY_SERVER_PASSWORD"     = var.docker_registry_password
+    "DOCKER_REGISTRY_SERVER_USERNAME"     = local.docker_registry_username
+    "DOCKER_REGISTRY_SERVER_URL"          = local.docker_registry_url
+    "DOCKER_REGISTRY_SERVER_PASSWORD"     = local.docker_registry_password
   }
 
   secure_app_settings = var.secret_name != "" && var.key_vault_id != "" ? {

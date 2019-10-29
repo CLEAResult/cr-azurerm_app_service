@@ -20,3 +20,10 @@ variable "slot_num" {}
 
 variable "secret_name" {}
 
+variable "azure_registry_name" {
+  default = ""
+}
+
+variable "azure_registry_rg" {
+  default = ""
+}

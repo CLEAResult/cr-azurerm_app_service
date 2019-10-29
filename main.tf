@@ -77,4 +77,10 @@ data "azurerm_key_vault_secret" "app" {
   key_vault_id        = var.key_vault_id
 }
 
+data "azurerm_container_registry" "acr" {
+  count               = var.azure_registry_name != "" && var.azure_registry_rg != "" ? 1 : 0
+  name                = var.azure_registry_name
+  resource_group_name = var.azure_registry_rg
+}
+
 data "azurerm_client_config" "current" {}

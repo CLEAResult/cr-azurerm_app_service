@@ -8,6 +8,14 @@ output "resource_group_reader_group_name" {
   value = module.rg.readerName
 }
 
+output "azure_registry_name" {
+  value = azurerm_container_registry.acr.name
+}
+
+output "azure_registry_rg" {
+  value = azurerm_container_registry.acr.resource_group_name
+}
+
 #
 # Web application outputs
 #
