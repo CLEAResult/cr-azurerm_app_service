@@ -179,12 +179,12 @@ locals {
   name_prefix = var.name_prefix != "" ? var.name_prefix : local.default_name_prefix
   name        = format("%s%s", local.name_prefix, local.type)
 
-  linux_fx_version = data.azurerm_app_service_plan.app.kind == "Windows" ? "" : format("%s%s", var.fx, var.fx_version)
+  linux_fx_version = data.azurerm_app_service_plan.app.kind == "Windows" ? null : format("%s%s", var.fx, var.fx_version)
 
   docker_registry_url  = var.docker_registry_url != "" ? var.docker_registry_url : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].login_server : ""
   docker_registry_username  = var.docker_registry_username != "" ? var.docker_registry_username : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].admin_username : ""
   docker_registry_password  = var.docker_registry_password != "" ? var.docker_registry_password : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].admin_password : ""
-    
+
   app_settings = {
     "WEBSITES_CONTAINER_START_TIME_LIMIT" = var.start_time_limit
     "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = var.enable_storage
