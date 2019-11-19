@@ -2,7 +2,7 @@
 
 Creates an azure app service web app on an existing app service plan.
 
-This module is being updated relatively frequently and may be fragile 
+This module is being updated relatively frequently and may be fragile
 to unexpected inputs.  Reference the test fixture.
 
 # Required Input Variables
@@ -12,7 +12,7 @@ to unexpected inputs.  Reference the test fixture.
 
 Note that both the plan and resource group in `rg_name` must exist prior to creating the web app.  See https://github.com/CLEAResult/cr-terraform-examples for a working example.
 
-Also, the location variable must match the location where the plan exists. Otherwise, you will get an error like the following, even though the reource and the managed identity will still be created: 
+Also, the location variable must match the location where the plan exists. Otherwise, you will get an error like the following, even though the reource and the managed identity will still be created:
 
 `A resource with the same name cannot be created in location 'Central US'. Please select a new resource name."`
 
@@ -57,3 +57,4 @@ module "appservice" {
   ]
 }
 ```
+
