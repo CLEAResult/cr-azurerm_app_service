@@ -39,6 +39,7 @@ resource "azurerm_app_service" "app" {
     always_on        = "true"
     app_command_line = var.command
     php_version      = var.win_php_version
+    ip_restriction   = local.ip_restrictions
     linux_fx_version = local.linux_fx_version
     http2_enabled    = var.http2_enabled
     ftps_state       = var.ftps_state
