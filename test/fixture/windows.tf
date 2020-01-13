@@ -17,6 +17,7 @@ module "windows_appservice" {
   rgid            = format("win%s", var.rgid)
   environment     = var.environment
   location        = var.location
+  name_prefix     = format("%s3", random_string.test.result)
   num             = 1
   slot_num        = var.slot_num
   plan            = azurerm_app_service_plan.windows.id
