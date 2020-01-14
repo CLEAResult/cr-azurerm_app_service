@@ -56,7 +56,7 @@ variable "http2_enabled" {
 variable "ip_restrictions" {
   type        = list(string)
   default     = []
-  description = "A list of IP addresses in CIDR format specifying Access Restrictions."
+  description = "A list of IP addresses in CIDR format that will be permitted access to the site.  All other IP addresses will be denied.  If you do not specify this variable, or if you specify an empty list, all IP addresses will be permitted."
 }
 
 variable "ftps_state" {
@@ -219,13 +219,6 @@ locals {
     for secret in data.azurerm_key_vault_secret.app:
     replace(secret.name, "-", "_") => format("@Microsoft.KeyVault(SecretUri=%s)", secret.id)
   } : {}
-
-  ip_restrictions = [
-    for prefix in var.ip_restrictions : {
-      ip_address  = split("/", prefix)[0]
-      subnet_mask = cidrnetmask(prefix)
-    }
-  ]
 }
 
 # This module provides a data map output to lookup naming standard references

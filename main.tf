@@ -39,11 +39,18 @@ resource "azurerm_app_service" "app" {
     always_on        = "true"
     app_command_line = var.command
     php_version      = var.win_php_version
-    ip_restriction   = local.ip_restrictions
     linux_fx_version = local.linux_fx_version
     http2_enabled    = var.http2_enabled
     ftps_state       = var.ftps_state
 
+    dynamic "ip_restriction" {
+      for_each = var.ip_restrictions
+      content {
+        ip_address  = split("/", ip_restriction.value)[0]
+        subnet_mask = cidrnetmask(ip_restriction.value)
+      }
+    }
+  
     default_documents = [
       "index.html",
       "index.php",
