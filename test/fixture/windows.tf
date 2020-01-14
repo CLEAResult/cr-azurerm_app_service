@@ -25,6 +25,7 @@ module "windows_appservice" {
   http2_enabled   = var.http2_enabled
   key_vault_id    = "" # azurerm_key_vault_secret.test.key_vault_id # see main.tf too
   secret_name     = "" # var.secret_name
+  ip_restrictions = var.ip_restrictions
 
   storage_accounts = []
 }

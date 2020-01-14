@@ -5,3 +5,6 @@ location            = "westus"
 create_date         = "20301011"
 slot_num            = 1
 secret_name         = "testsecret"
+ip_restrictions     = ["192.168.0.0/16", "172.16.0.0/12"]
+tenant_id           = "ADD_TENANT_ID_TO_TEST"
+subscription_id     = "ADD_SUBSCRIPTION_ID_TO_TEST"

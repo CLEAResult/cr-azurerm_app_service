@@ -27,3 +27,7 @@ variable "azure_registry_name" {
 variable "azure_registry_rg" {
   default = ""
 }
+
+variable "ip_restrictions" {
+  default = []
+}
