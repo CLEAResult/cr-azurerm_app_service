@@ -43,6 +43,14 @@ resource "azurerm_app_service" "app" {
     http2_enabled    = var.http2_enabled
     ftps_state       = var.ftps_state
 
+    dynamic "ip_restriction" {
+      for_each = var.ip_restrictions
+      content {
+        ip_address  = split("/", ip_restriction.value)[0]
+        subnet_mask = cidrnetmask(ip_restriction.value)
+      }
+    }
+  
     default_documents = [
       "index.html",
       "index.php",

@@ -45,27 +45,18 @@ variable "rg_name" {
   description = "Resource group name"
 }
 
-variable "fx" {
-  default     = "PHP"
-  description = "Used for Linux web app framework selection - ignored on Windows web apps.  Default is PHP. Valid options are shown in the templates at https://github.com/terraform-providers/terraform-provider-azurerm/tree/master/examples/app-service."
-}
-
-variable "fx_version" {
-  default     = "7.2"
-  description = "Used for Linux web app framework selection - ignored on Windows web apps.  Valid values refer to PHP or NodeJS version, or can specify a Docker hub path and version tag."
-}
-
-variable "win_php_version" {
-  default     = "7.2"
-  description = "Used to select Windows web app PHP version.  Valid values are 5.6, 7.0, 7.1, or 7.2.  Default is 7.2."
-}
-
 variable "subscription_id" {
   description = "Prompt for subscription ID"
 }
 
 variable "http2_enabled" {
   description = "Is HTTP2 Enabled on this App Service? Defaults to false."
+}
+
+variable "ip_restrictions" {
+  type        = list(string)
+  default     = []
+  description = "A list of IP addresses in CIDR format that will be permitted access to the site.  All other IP addresses will be denied.  If you do not specify this variable, or if you specify an empty list, all IP addresses will be permitted."
 }
 
 variable "ftps_state" {
@@ -95,6 +86,21 @@ variable "secret_name" {
   type        = string
   default     = ""
   description = "Secret name to retrieve from var.key_vault_id. Uses Key Vault references as values for app settings."
+}
+
+variable "win_php_version" {
+  default     = "7.2"
+  description = "Used to select Windows web app PHP version.  Valid values are 5.6, 7.0, 7.1, or 7.2.  Default is 7.2."
+}
+
+variable "fx" {
+  default     = "php"
+  description = "Used for Linux web app framework selection - ignored on Windows web apps. Default is PHP. Valid values for non-container deployments are `php` or `node`. Valid values for container deployments are: `docker`, `compose` or `kube`."
+}
+
+variable "fx_version" {
+  default     = "7.2"
+  description = "Used for Linux web app framework selection - ignored on Windows web apps.  Valid values are dependent on the `fx` variable value. If `fx` is `php`, `fx_value` would need to be a supported Azure web app PHP version (ie: 5.6, 7.0, 7.2). Similar if `fx` is `node`. If `fx` is `docker`, `fx_version` should specify a valid container image name such as `appsvcsample/python-helloworld:latest`. Lastly, if `fx` is either `compose` or `kube`, `fx_version` should be a valid YAML configuration."
 }
 
 variable "port" {
@@ -154,6 +160,8 @@ variable "storage_accounts" {
     access_key   = string
     mount_path   = string
   }))
+  default     = []
+  description = "Used for Azure Linux web app Bring Your Own storage. Mounts an Azure Blob container or Azure Files share to a specific folder path on the web app."
 }
 
 variable "tags" {
@@ -179,8 +187,6 @@ locals {
   name_prefix = var.name_prefix != "" ? var.name_prefix : local.default_name_prefix
   name        = format("%s%s", local.name_prefix, local.type)
 
-  linux_fx_version = data.azurerm_app_service_plan.app.kind == "Windows" ? null : format("%s%s", var.fx, var.fx_version)
-
   docker_registry_url  = var.docker_registry_url != "" ? var.docker_registry_url : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].login_server : ""
   docker_registry_username  = var.docker_registry_username != "" ? var.docker_registry_username : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].admin_username : ""
   docker_registry_password  = var.docker_registry_password != "" ? var.docker_registry_password : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].admin_password : ""
@@ -193,6 +199,21 @@ locals {
     "DOCKER_REGISTRY_SERVER_URL"          = local.docker_registry_url
     "DOCKER_REGISTRY_SERVER_PASSWORD"     = local.docker_registry_password
   }
+
+  fx = upper(var.fx)
+
+  supported_fx = {
+    COMPOSE = true
+    DOCKER  = true
+    KUBE    = true
+    NODE    = true
+    PHP     = true
+  }
+  check_supported_fx = local.supported_fx[local.fx]
+  
+  fx_version = local.fx == "COMPOSE" || local.fx == "KUBE" ? base64encode(var.fx_version) : var.fx_version
+
+  linux_fx_version = data.azurerm_app_service_plan.app.kind == "Windows" ? null : format("%s|%s", local.fx, local.fx_version)
 
   secure_app_settings = var.secret_name != "" && var.key_vault_id != "" ? {
     for secret in data.azurerm_key_vault_secret.app:
