@@ -39,7 +39,7 @@ resource "azurerm_app_service_slot" "app" {
         subnet_mask = cidrnetmask(ip_restriction.value)
       }
     }
-  
+
     default_documents = [
       "index.html",
       "index.php",

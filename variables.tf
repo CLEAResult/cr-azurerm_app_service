@@ -27,7 +27,7 @@ variable "num" {
 }
 
 variable "slot_num" {
-  default = 0
+  default     = 0
   description = "If set to a number greater than 0, create that many slots with generated names and the same configuration as the app. For now, this feature only support creating a slot on the first app service count (index 0).  If var.num is greater than 1, all slots will still be created on the index 0 app."
 }
 
@@ -61,7 +61,7 @@ variable "ip_restrictions" {
 
 variable "ftps_state" {
   description = "State of FTP / FTPS service for this App Service. Possible values include: AllAllowed, FtpsOnly and Disabled."
-  default = "FtpsOnly"
+  default     = "FtpsOnly"
 }
 
 variable "app_settings" {
@@ -71,8 +71,8 @@ variable "app_settings" {
 }
 
 variable "enable_storage" {
-  type = bool
-  default = false
+  type        = bool
+  default     = false
   description = "Per Microsoft docs: If WEBSITES_ENABLE_APP_SERVICE_STORAGE setting is unspecified or set to true, the /home/ directory will be shared across scale instances, and files written will persist across restarts. Explicitly setting WEBSITES_ENABLE_APP_SERVICE_STORAGE to false will disable the mount."
 }
 
@@ -173,8 +173,8 @@ variable "tags" {
 # Compute default name values
 locals {
   plan_name = var.plan != "" ? split("/", var.plan)[8] : var.plan_name
-  plan_rg = var.plan != "" ? split("/", var.plan)[4] : var.plan_rg
-  plan = var.plan != "" ? var.plan : format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Web/serverFarms/%s", data.azurerm_client_config.current.subscription_id, var.plan_rg, var.plan_name)
+  plan_rg   = var.plan != "" ? split("/", var.plan)[4] : var.plan_rg
+  plan      = var.plan != "" ? var.plan : format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Web/serverFarms/%s", data.azurerm_client_config.current.subscription_id, var.plan_rg, var.plan_name)
 
   env_id = lookup(module.naming.env-map, var.environment, "env")
   type   = lookup(module.naming.type-map, "azurerm_app_service", "typ")
@@ -187,9 +187,9 @@ locals {
   name_prefix = var.name_prefix != "" ? var.name_prefix : local.default_name_prefix
   name        = format("%s%s", local.name_prefix, local.type)
 
-  docker_registry_url  = var.docker_registry_url != "" ? var.docker_registry_url : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].login_server : ""
-  docker_registry_username  = var.docker_registry_username != "" ? var.docker_registry_username : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].admin_username : ""
-  docker_registry_password  = var.docker_registry_password != "" ? var.docker_registry_password : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].admin_password : ""
+  docker_registry_url      = var.docker_registry_url != "" ? var.docker_registry_url : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].login_server : ""
+  docker_registry_username = var.docker_registry_username != "" ? var.docker_registry_username : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].admin_username : ""
+  docker_registry_password = var.docker_registry_password != "" ? var.docker_registry_password : var.azure_registry_name != "" && var.azure_registry_rg != "" ? data.azurerm_container_registry.acr[0].admin_password : ""
 
   app_settings = {
     "WEBSITES_CONTAINER_START_TIME_LIMIT" = var.start_time_limit
@@ -203,20 +203,21 @@ locals {
   fx = upper(var.fx)
 
   supported_fx = {
-    COMPOSE = true
-    DOCKER  = true
-    KUBE    = true
-    NODE    = true
-    PHP     = true
+    COMPOSE    = true
+    DOTNETCORE = true
+    DOCKER     = true
+    KUBE       = true
+    NODE       = true
+    PHP        = true
   }
   check_supported_fx = local.supported_fx[local.fx]
-  
+
   fx_version = local.fx == "COMPOSE" || local.fx == "KUBE" ? base64encode(var.fx_version) : var.fx_version
 
   linux_fx_version = data.azurerm_app_service_plan.app.kind == "Windows" ? null : format("%s|%s", local.fx, local.fx_version)
 
   secure_app_settings = var.secret_name != "" && var.key_vault_id != "" ? {
-    for secret in data.azurerm_key_vault_secret.app:
+    for secret in data.azurerm_key_vault_secret.app :
     replace(secret.name, "-", "_") => format("@Microsoft.KeyVault(SecretUri=%s)", secret.id)
   } : {}
 }

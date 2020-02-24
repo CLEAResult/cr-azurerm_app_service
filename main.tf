@@ -24,7 +24,7 @@ resource "azurerm_app_service" "app" {
   https_only = "true"
 
   dynamic "storage_account" {
-    for_each = var.storage_accounts 
+    for_each = var.storage_accounts
     content {
       name         = storage_account.value.name
       type         = storage_account.value.type
@@ -50,7 +50,7 @@ resource "azurerm_app_service" "app" {
         subnet_mask = cidrnetmask(ip_restriction.value)
       }
     }
-  
+
     default_documents = [
       "index.html",
       "index.php",
@@ -80,9 +80,9 @@ data "azurerm_app_service_plan" "app" {
 }
 
 data "azurerm_key_vault_secret" "app" {
-  count               = var.secret_name != "" && var.key_vault_id != "" ? 1 : 0
-  name                = var.secret_name
-  key_vault_id        = var.key_vault_id
+  count        = var.secret_name != "" && var.key_vault_id != "" ? 1 : 0
+  name         = var.secret_name
+  key_vault_id = var.key_vault_id
 }
 
 data "azurerm_container_registry" "acr" {
