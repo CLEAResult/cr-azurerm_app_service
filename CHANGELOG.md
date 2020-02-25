@@ -1,5 +1,9 @@
 [Unreleased]
 
+[v1.5.1] - 2020-02-25
+
+Add DOTNETCORE as valid value for supported_fx
+
 [v1.5.0] - 2020-01-13
 
 Better container support for linux web apps
