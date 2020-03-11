@@ -3,7 +3,7 @@ resource "azurerm_app_service_slot" "app" {
   count               = var.slot_num
   location            = var.location
   resource_group_name = var.rg_name
-  app_service_plan_id = local.plan
+  app_service_plan_id = var.plan
   app_service_name    = basename(azurerm_app_service.app[0].id)
   enabled             = "true"
 

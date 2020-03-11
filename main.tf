@@ -3,7 +3,7 @@ resource "azurerm_app_service" "app" {
   count               = var.num
   location            = var.location
   resource_group_name = var.rg_name
-  app_service_plan_id = local.plan
+  app_service_plan_id = var.plan
   enabled             = "true"
 
   identity {
@@ -74,15 +74,17 @@ resource "azurerm_role_assignment" "WebsiteContributor" {
 
 # Used to work around BadRequest error if linux_fx_version is not empty on a
 # Windows app service plan
-data "azurerm_app_service_plan" "app" {
-  name                = local.plan_name
-  resource_group_name = local.plan_rg
+provider "azurerm" {
+  alias           = "plan"
+  subscription_id = split("/", var.plan)[2]
+  tenant_id       = data.azurerm_client_config.current.tenant_id
 }
 
-data "azurerm_key_vault_secret" "app" {
-  count        = var.secret_name != "" && var.key_vault_id != "" ? 1 : 0
-  name         = var.secret_name
-  key_vault_id = var.key_vault_id
+# Should support using plans in a different subscription from web app
+data "azurerm_app_service_plan" "app" {
+  provider            = azurerm.plan
+  name                = local.plan_name
+  resource_group_name = local.plan_rg
 }
 
 data "azurerm_container_registry" "acr" {

@@ -12,21 +12,20 @@ resource "azurerm_app_service_plan" "linux" {
 }
 
 module "linux_appservice" {
-  source              = "../.."
-  rg_name             = basename(module.rg.id)
-  rgid                = var.rgid
-  environment         = var.environment
-  location            = var.location
-  name_prefix         = format("%s2", random_string.test.result)
-  num                 = 1
-  slot_num            = var.slot_num
-  plan                = azurerm_app_service_plan.linux.id
-  subscription_id     = var.subscription_id
-  http2_enabled       = var.http2_enabled
-  key_vault_id        = "" # azurerm_key_vault_secret.test.key_vault_id # see main.tf too
-  secret_name         = "" # var.secret_name
-  azure_registry_name = var.azure_registry_name
-  azure_registry_rg   = var.azure_registry_rg
+  source                   = "../.."
+  rg_name                  = basename(module.rg.id)
+  rgid                     = var.rgid
+  environment              = var.environment
+  location                 = var.location
+  name_prefix              = format("%s2", random_string.test.result)
+  num                      = 1
+  slot_num                 = var.slot_num
+  plan                     = azurerm_app_service_plan.linux.id
+  subscription_id          = var.subscription_id
+  http2_enabled            = var.http2_enabled
+  secure_app_settings_refs = { "testsecret" : azurerm_key_vault_secret.test.id }
+  azure_registry_name      = var.azure_registry_name
+  azure_registry_rg        = var.azure_registry_rg
 
   storage_accounts = [
     {
