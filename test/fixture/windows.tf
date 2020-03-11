@@ -23,7 +23,7 @@ module "windows_appservice" {
   plan                     = azurerm_app_service_plan.windows.id
   subscription_id          = var.subscription_id
   http2_enabled            = var.http2_enabled
-  secure_app_settings_refs = { "testsecret" : "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.test.id})" }
+  secure_app_settings_refs = { "testsecret" : azurerm_key_vault_secret.test.id }
   ip_restrictions          = var.ip_restrictions
 
   storage_accounts = []

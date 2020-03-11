@@ -23,7 +23,7 @@ module "linux_appservice" {
   plan                     = azurerm_app_service_plan.linux.id
   subscription_id          = var.subscription_id
   http2_enabled            = var.http2_enabled
-  secure_app_settings_refs = { "testsecret" : "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.test.id})" }
+  secure_app_settings_refs = { "testsecret" : azurerm_key_vault_secret.test.id }
   azure_registry_name      = var.azure_registry_name
   azure_registry_rg        = var.azure_registry_rg
 
