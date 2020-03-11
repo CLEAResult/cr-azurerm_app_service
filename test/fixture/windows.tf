@@ -12,20 +12,19 @@ resource "azurerm_app_service_plan" "windows" {
 }
 
 module "windows_appservice" {
-  source          = "../.."
-  rg_name         = basename(module.rg.id)
-  rgid            = format("win%s", var.rgid)
-  environment     = var.environment
-  location        = var.location
-  name_prefix     = format("%s3", random_string.test.result)
-  num             = 1
-  slot_num        = var.slot_num
-  plan            = azurerm_app_service_plan.windows.id
-  subscription_id = var.subscription_id
-  http2_enabled   = var.http2_enabled
-  key_vault_id    = "" # azurerm_key_vault_secret.test.key_vault_id # see main.tf too
-  secret_name     = "" # var.secret_name
-  ip_restrictions = var.ip_restrictions
+  source                   = "../.."
+  rg_name                  = basename(module.rg.id)
+  rgid                     = format("win%s", var.rgid)
+  environment              = var.environment
+  location                 = var.location
+  name_prefix              = format("%s3", random_string.test.result)
+  num                      = 1
+  slot_num                 = var.slot_num
+  plan                     = azurerm_app_service_plan.windows.id
+  subscription_id          = var.subscription_id
+  http2_enabled            = var.http2_enabled
+  secure_app_settings_refs = { "testsecret" : "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.test.id})" }
+  ip_restrictions          = var.ip_restrictions
 
   storage_accounts = []
 }

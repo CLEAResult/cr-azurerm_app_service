@@ -9,17 +9,7 @@ variable "location" {
 
 variable "plan" {
   default     = ""
-  description = "Full Azure App Service Plan resource ID.  Either 'plan' or 'plan_name' and 'plan_rg' must be set. 'Plan' takes precendence."
-}
-
-variable "plan_name" {
-  default     = ""
-  description = "Azure App Service Plan name.  Either 'plan' or 'plan_name' and 'plan_rg' must be set. 'Plan' takes precendence."
-}
-
-variable "plan_rg" {
-  default     = ""
-  description = "Azure App Service Plan resource group name.  Either 'plan' or 'plan_name' and 'plan_rg' must be set. 'Plan' takes precendence."
+  description = "Full Azure App Service Plan resource ID."
 }
 
 variable "num" {
@@ -76,21 +66,15 @@ variable "enable_storage" {
   description = "Per Microsoft docs: If WEBSITES_ENABLE_APP_SERVICE_STORAGE setting is unspecified or set to true, the /home/ directory will be shared across scale instances, and files written will persist across restarts. Explicitly setting WEBSITES_ENABLE_APP_SERVICE_STORAGE to false will disable the mount."
 }
 
-variable "key_vault_id" {
-  type        = string
-  default     = ""
-  description = "The ID of an existing Key Vault. Required if `secret_name` is set."
-}
-
-variable "secret_name" {
-  type        = string
-  default     = ""
-  description = "Secret name to retrieve from var.key_vault_id. Uses Key Vault references as values for app settings."
+variable "secure_app_settings_refs" {
+  type        = map(string)
+  default     = {}
+  description = "Set sensitive app settings. Value be a valid key vault reference URI as documented. This can be obtained from a key vault secret data source ID."
 }
 
 variable "win_php_version" {
   default     = "7.2"
-  description = "Used to select Windows web app PHP version.  Valid values are 5.6, 7.0, 7.1, or 7.2.  Default is 7.2."
+  description = "Used to select Windows web app PHP version.  Valid values are 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, and off.  Default is 7.2."
 }
 
 variable "fx" {
@@ -100,7 +84,7 @@ variable "fx" {
 
 variable "fx_version" {
   default     = "7.2"
-  description = "Used for Linux web app framework selection - ignored on Windows web apps.  Valid values are dependent on the `fx` variable value. If `fx` is `php`, `fx_value` would need to be a supported Azure web app PHP version (ie: 5.6, 7.0, 7.2). Similar if `fx` is `node`. If `fx` is `docker`, `fx_version` should specify a valid container image name such as `appsvcsample/python-helloworld:latest`. Lastly, if `fx` is either `compose` or `kube`, `fx_version` should be a valid YAML configuration."
+  description = "Used for Linux web app framework selection - ignored on Windows web apps.  Valid values are dependent on the `fx` variable value. If `fx` is `php`, `fx_value` would need to be a supported Azure web app PHP version (ie: 7.2). Similar if `fx` is `node`. If `fx` is `docker`, `fx_version` should specify a valid container image name such as `appsvcsample/python-helloworld:latest`. Lastly, if `fx` is either `compose` or `kube`, `fx_version` should be a valid YAML configuration."
 }
 
 variable "port" {
@@ -172,9 +156,8 @@ variable "tags" {
 
 # Compute default name values
 locals {
-  plan_name = var.plan != "" ? split("/", var.plan)[8] : var.plan_name
-  plan_rg   = var.plan != "" ? split("/", var.plan)[4] : var.plan_rg
-  plan      = var.plan != "" ? var.plan : format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Web/serverFarms/%s", data.azurerm_client_config.current.subscription_id, var.plan_rg, var.plan_name)
+  plan_name = split("/", var.plan)[8] 
+  plan_rg   = split("/", var.plan)[4] 
 
   env_id = lookup(module.naming.env-map, var.environment, "env")
   type   = lookup(module.naming.type-map, "azurerm_app_service", "typ")
@@ -203,6 +186,7 @@ locals {
   fx = upper(var.fx)
 
   supported_fx = {
+    ASPNET     = true
     COMPOSE    = true
     DOTNETCORE = true
     DOCKER     = true
@@ -216,14 +200,18 @@ locals {
 
   linux_fx_version = data.azurerm_app_service_plan.app.kind == "Windows" ? null : format("%s|%s", local.fx, local.fx_version)
 
-  secure_app_settings = var.secret_name != "" && var.key_vault_id != "" ? {
-    for secret in data.azurerm_key_vault_secret.app :
-    replace(secret.name, "-", "_") => format("@Microsoft.KeyVault(SecretUri=%s)", secret.id)
-  } : {}
+# Test key vault reference - error if doesn't match regex
+# If regex() returns false, execution will stop.
+# Otherwise, format proper key vault reference
+  secure_app_settings = {
+    for k, v in var.secure_app_settings_refs :
+    replace(k, "/[^a-zA-Z0-9_]/", "_") => format("@Microsoft.KeyVault(SecretUri=%s)", v) 
+    if length(regexall("https://([A-Za-z][0-9A-Za-z-_]+)\\.vault\\.azure\\.net/secrets/([A-Za-z0-9-]{1,127})/(\\w{32})", v)) > 0
+  } 
 }
 
 # This module provides a data map output to lookup naming standard references
 module "naming" {
-  source = "git::https://github.com/CLEAResult/cr-azurerm-naming.git?ref=v1.0.1"
+  source = "git::https://github.com/CLEAResult/cr-azurerm-naming.git?ref=v1.1.2"
 }
 

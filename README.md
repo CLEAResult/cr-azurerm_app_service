@@ -1,5 +1,7 @@
 # cr-azurerm_app_service
 
+** WARNING! ** There may be breaking changes from time to time
+
 Creates an azure app service web app on an existing app service plan.
 
 This module is being updated relatively frequently and may be fragile
