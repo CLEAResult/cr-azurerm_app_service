@@ -1,6 +1,6 @@
 [Unreleased]
 
-[v1.7.0] - 2020-03-14
+[v1.7.1] - 2020-03-14
 
 Breaking changes:
 
@@ -9,6 +9,12 @@ Breaking changes:
 New features:
 
     - Add `virtual_network_subnet_ids` list variable to specify ip restrictions
+    - Pass use_msi to the new provider block to support 2.0 azurerm provider
+
+Other:
+
+    - Add types to all variables
+    - Add default value to http2_enabled
 
 [v1.6.1] - 2020-03-10
 
