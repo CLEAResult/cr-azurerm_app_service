@@ -1,4 +1,5 @@
 provider "azurerm" {
+  use_msi = var.use_msi
   features {}
 }
 
