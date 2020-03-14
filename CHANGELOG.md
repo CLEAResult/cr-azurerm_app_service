@@ -1,6 +1,16 @@
 [Unreleased]
 
-[v1.6.0] - 2020-03-10
+[v1.7.0] - 2020-03-14
+
+Breaking changes:
+
+    - Requires azurerm provider >= 2.0
+
+New features:
+
+    - Add `virtual_network_subnet_ids` list variable to specify ip restrictions
+
+[v1.6.1] - 2020-03-10
 
 Breaking changes:
 

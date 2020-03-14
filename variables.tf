@@ -46,7 +46,13 @@ variable "http2_enabled" {
 variable "ip_restrictions" {
   type        = list(string)
   default     = []
-  description = "A list of IP addresses in CIDR format that will be permitted access to the site.  All other IP addresses will be denied.  If you do not specify this variable, or if you specify an empty list, all IP addresses will be permitted."
+  description = "A list of IP addresses in CIDR format that will be permitted access to the site.  All other IP addresses will be denied.  If you do not specify this variable, or if you specify an empty list and virtual_network_subnet_ids is also empty, all IP addresses will be permitted."
+}
+
+variable "virtual_network_subnet_ids" {
+  type        = list(string)
+  default     = []
+  description = "A list of Azure virtual network subnet resource IDs that will be permitted access to the site.  All other IP addresses will be denied.  If you do not specify this variable, or if you specify an empty list and ip_restrictions is also empty, all IP addresses will be permitted."
 }
 
 variable "ftps_state" {
@@ -156,8 +162,8 @@ variable "tags" {
 
 # Compute default name values
 locals {
-  plan_name = split("/", var.plan)[8] 
-  plan_rg   = split("/", var.plan)[4] 
+  plan_name = split("/", var.plan)[8]
+  plan_rg   = split("/", var.plan)[4]
 
   env_id = lookup(module.naming.env-map, var.environment, "env")
   type   = lookup(module.naming.type-map, "azurerm_app_service", "typ")
@@ -200,14 +206,19 @@ locals {
 
   linux_fx_version = data.azurerm_app_service_plan.app.kind == "Windows" ? null : format("%s|%s", local.fx, local.fx_version)
 
-# Test key vault reference - error if doesn't match regex
-# If regex() returns false, execution will stop.
-# Otherwise, format proper key vault reference
+  # Test key vault reference - error if doesn't match regex
+  # If regex() returns false, execution will stop.
+  # Otherwise, format proper key vault reference
   secure_app_settings = {
     for k, v in var.secure_app_settings_refs :
-    replace(k, "/[^a-zA-Z0-9-]/", "-") => format("@Microsoft.KeyVault(SecretUri=%s)", v) 
+    replace(k, "/[^a-zA-Z0-9-]/", "-") => format("@Microsoft.KeyVault(SecretUri=%s)", v)
     if length(regexall("https://([A-Za-z][0-9A-Za-z-_]+)\\.vault\\.azure\\.net/secrets/([A-Za-z0-9-]{1,127})/(\\w{32})", v)) > 0
-  } 
+  }
+
+  ip_restrictions = [
+    for cidrprefix in var.ip_restrictions :
+    regex("^(([0-9]{1,3}\\.){3}[0-9]{1,3}(\\/([0-9]|[1-2][0-9]|3[0-2])))$", cidrprefix)[0]
+  ]
 }
 
 # This module provides a data map output to lookup naming standard references
