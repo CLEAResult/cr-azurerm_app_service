@@ -1,8 +1,3 @@
-provider "azurerm" {
-  use_msi = var.use_msi
-  features {}
-}
-
 resource "azurerm_app_service" "app" {
   name                = format("%s%03d", local.name, count.index + 1)
   count               = var.num

@@ -1,6 +1,6 @@
 [Unreleased]
 
-[v1.7.1] - 2020-03-14
+[v1.7.2] - 2020-03-14
 
 Breaking changes:
 
