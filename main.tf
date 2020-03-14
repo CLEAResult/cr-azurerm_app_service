@@ -72,17 +72,8 @@ resource "azurerm_role_assignment" "WebsiteContributor" {
   principal_id         = azuread_group.WebsiteContributor.id
 }
 
-# Used to work around BadRequest error if linux_fx_version is not empty on a
-# Windows app service plan
-provider "azurerm" {
-  alias           = "plan"
-  subscription_id = split("/", var.plan)[2]
-  tenant_id       = data.azurerm_client_config.current.tenant_id
-}
-
 # Should support using plans in a different subscription from web app
 data "azurerm_app_service_plan" "app" {
-  provider            = azurerm.plan
   name                = local.plan_name
   resource_group_name = local.plan_rg
 }
