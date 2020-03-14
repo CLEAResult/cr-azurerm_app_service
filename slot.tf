@@ -33,10 +33,17 @@ resource "azurerm_app_service_slot" "app" {
     ftps_state       = var.ftps_state
 
     dynamic "ip_restriction" {
-      for_each = var.ip_restrictions
+      for_each = local.ip_restrictions
       content {
-        ip_address  = split("/", ip_restriction.value)[0]
-        subnet_mask = cidrnetmask(ip_restriction.value)
+        ip_address                = ip_restriction.value
+        virtual_network_subnet_id = null
+      }
+    }
+
+    dynamic "ip_restriction" {
+      for_each = var.virtual_network_subnet_ids
+      content {
+        virtual_network_subnet_id = ip_restriction.value
       }
     }
 
