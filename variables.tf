@@ -205,7 +205,7 @@ locals {
 # Otherwise, format proper key vault reference
   secure_app_settings = {
     for k, v in var.secure_app_settings_refs :
-    replace(k, "/[^a-zA-Z0-9_]/", "_") => format("@Microsoft.KeyVault(SecretUri=%s)", v) 
+    replace(k, "/[^a-zA-Z0-9-]/", "-") => format("@Microsoft.KeyVault(SecretUri=%s)", v) 
     if length(regexall("https://([A-Za-z][0-9A-Za-z-_]+)\\.vault\\.azure\\.net/secrets/([A-Za-z0-9-]{1,127})/(\\w{32})", v)) > 0
   } 
 }
