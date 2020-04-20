@@ -6,5 +6,5 @@ create_date         = "20311031"
 slot_num            = 1
 secret_name         = "testsecret"
 ip_restrictions     = ["1.1.1.1/32", "8.8.8.8/32"]
-tenant_id           = "***REMOVED***"
-subscription_id     = "***REMOVED***"
+tenant_id           = "ADD_TENANT_ID_TO_TEST"
+subscription_id     = "ADD_SUBSCRIPTION_ID_TO_TEST"
