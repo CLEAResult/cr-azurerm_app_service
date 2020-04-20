@@ -3,7 +3,7 @@ resource "azurerm_app_service" "app" {
   count               = var.num
   location            = var.location
   resource_group_name = var.rg_name
-  app_service_plan_id = local.plan
+  app_service_plan_id = var.plan
   enabled             = "true"
 
   identity {
@@ -44,10 +44,17 @@ resource "azurerm_app_service" "app" {
     ftps_state       = var.ftps_state
 
     dynamic "ip_restriction" {
-      for_each = var.ip_restrictions
+      for_each = local.ip_restrictions
       content {
-        ip_address  = split("/", ip_restriction.value)[0]
-        subnet_mask = cidrnetmask(ip_restriction.value)
+        ip_address                = ip_restriction.value
+        virtual_network_subnet_id = null
+      }
+    }
+
+    dynamic "ip_restriction" {
+      for_each = var.virtual_network_subnet_ids
+      content {
+        virtual_network_subnet_id = ip_restriction.value
       }
     }
 
@@ -72,17 +79,10 @@ resource "azurerm_role_assignment" "WebsiteContributor" {
   principal_id         = azuread_group.WebsiteContributor.id
 }
 
-# Used to work around BadRequest error if linux_fx_version is not empty on a
-# Windows app service plan
+# Should support using plans in a different subscription from web app
 data "azurerm_app_service_plan" "app" {
   name                = local.plan_name
   resource_group_name = local.plan_rg
-}
-
-data "azurerm_key_vault_secret" "app" {
-  count        = var.secret_name != "" && var.key_vault_id != "" ? 1 : 0
-  name         = var.secret_name
-  key_vault_id = var.key_vault_id
 }
 
 data "azurerm_container_registry" "acr" {

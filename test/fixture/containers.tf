@@ -10,8 +10,6 @@ module "docker_appservice" {
   plan            = azurerm_app_service_plan.linux.id
   subscription_id = var.subscription_id
   http2_enabled   = var.http2_enabled
-  key_vault_id    = "" # azurerm_key_vault_secret.test.key_vault_id # see main.tf too
-  secret_name     = "" # var.secret_name
   fx              = "docker"
   fx_version      = "appsvcsample/python-helloworld:latest"
   ip_restrictions = var.ip_restrictions
@@ -29,8 +27,6 @@ module "compose_appservice" {
   plan            = azurerm_app_service_plan.linux.id
   subscription_id = var.subscription_id
   http2_enabled   = var.http2_enabled
-  key_vault_id    = "" # azurerm_key_vault_secret.test.key_vault_id # see main.tf too
-  secret_name     = "" # var.secret_name
   fx              = "compose"
   fx_version      = data.local_file.compose.content
   ip_restrictions = var.ip_restrictions
