@@ -1,5 +1,11 @@
 [Unreleased]
 
+[v1.7.3, v1.5.2] - 2020-04-20
+
+New features:
+
+    - Add `name_suffix` and `name_override` variable support (PR #10)
+
 [v1.7.2] - 2020-03-14
 
 Breaking changes:
