@@ -1,5 +1,5 @@
 resource "azurerm_app_service" "app" {
-  name                = format("%s%03d", local.name, count.index + 1)
+  name                = var.name_override != "" ? var.name_override : format("%s%03d%s", local.name, count.index + 1, var.name_suffix)
   count               = var.num
   location            = var.location
   resource_group_name = var.rg_name

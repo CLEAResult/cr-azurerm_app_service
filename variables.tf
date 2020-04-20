@@ -36,6 +36,18 @@ variable "name_prefix" {
   description = "Allows users to override the standard naming prefix.  If left as an empty string, the standard naming conventions will apply."
 }
 
+variable "name_suffix" {
+  type        = string
+  default     = ""
+  description = "Allows users to override the standard naming suffix, appearing after the instance count.  If left as an empty string, the standard naming conventions will apply."
+}
+
+variable "name_override" {
+  type        = string
+  default     = ""
+  description = "If non-empty, will override all the standard naming conventions.  This should only be used when a product requires a specific database name."
+}
+
 variable "environment" {
   default     = "dev"
   description = "Environment used in naming lookups"
