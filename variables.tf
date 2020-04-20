@@ -237,7 +237,8 @@ locals {
 
   fx_version = local.fx == "COMPOSE" || local.fx == "KUBE" ? base64encode(var.fx_version) : var.fx_version
 
-  linux_fx_version = data.azurerm_app_service_plan.app.kind == "Windows" ? null : format("%s|%s", local.fx, local.fx_version)
+  plan_kind = upper(data.azurerm_app_service_plan.app.kind)
+  linux_fx_version = local.plan_kind == "WINDOWS" ? null : format("%s|%s", local.fx, local.fx_version)
 
   # Test key vault reference - error if doesn't match regex
   # If regex() returns false, execution will stop.
