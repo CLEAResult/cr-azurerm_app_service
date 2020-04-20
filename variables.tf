@@ -1,37 +1,45 @@
 variable "rgid" {
+  type        = string
   description = "RGID used for naming"
 }
 
 variable "location" {
+  type        = string
   default     = "southcentralus"
   description = "Location for resources to be created"
 }
 
 variable "plan" {
+  type        = string
   default     = ""
   description = "Full Azure App Service Plan resource ID.  Either 'plan' or 'plan_name' and 'plan_rg' must be set. 'Plan' takes precendence."
 }
 
 variable "plan_name" {
+  type        = string
   default     = ""
   description = "Azure App Service Plan name.  Either 'plan' or 'plan_name' and 'plan_rg' must be set. 'Plan' takes precendence."
 }
 
 variable "plan_rg" {
+  type        = string
   default     = ""
   description = "Azure App Service Plan resource group name.  Either 'plan' or 'plan_name' and 'plan_rg' must be set. 'Plan' takes precendence."
 }
 
 variable "num" {
+  type    = number
   default = 1
 }
 
 variable "slot_num" {
+  type        = string
   default     = 0
   description = "If set to a number greater than 0, create that many slots with generated names and the same configuration as the app. For now, this feature only support creating a slot on the first app service count (index 0).  If var.num is greater than 1, all slots will still be created on the index 0 app."
 }
 
 variable "name_prefix" {
+  type        = string
   default     = ""
   description = "Allows users to override the standard naming prefix.  If left as an empty string, the standard naming conventions will apply."
 }
@@ -49,19 +57,23 @@ variable "name_override" {
 }
 
 variable "environment" {
+  type        = string
   default     = "dev"
   description = "Environment used in naming lookups"
 }
 
 variable "rg_name" {
+  type        = string
   description = "Resource group name"
 }
 
 variable "subscription_id" {
+  type        = string
   description = "Prompt for subscription ID"
 }
 
 variable "http2_enabled" {
+  type        = string
   description = "Is HTTP2 Enabled on this App Service? Defaults to false."
 }
 
@@ -72,6 +84,7 @@ variable "ip_restrictions" {
 }
 
 variable "ftps_state" {
+  type        = string
   description = "State of FTP / FTPS service for this App Service. Possible values include: AllAllowed, FtpsOnly and Disabled."
   default     = "FtpsOnly"
 }
@@ -101,16 +114,19 @@ variable "secret_name" {
 }
 
 variable "win_php_version" {
+  type        = string
   default     = "7.2"
   description = "Used to select Windows web app PHP version.  Valid values are 5.6, 7.0, 7.1, or 7.2.  Default is 7.2."
 }
 
 variable "fx" {
+  type        = string
   default     = "php"
   description = "Used for Linux web app framework selection - ignored on Windows web apps. Default is PHP. Valid values for non-container deployments are `php` or `node`. Valid values for container deployments are: `docker`, `compose` or `kube`."
 }
 
 variable "fx_version" {
+  type        = string
   default     = "7.2"
   description = "Used for Linux web app framework selection - ignored on Windows web apps.  Valid values are dependent on the `fx` variable value. If `fx` is `php`, `fx_value` would need to be a supported Azure web app PHP version (ie: 5.6, 7.0, 7.2). Similar if `fx` is `node`. If `fx` is `docker`, `fx_version` should specify a valid container image name such as `appsvcsample/python-helloworld:latest`. Lastly, if `fx` is either `compose` or `kube`, `fx_version` should be a valid YAML configuration."
 }
@@ -236,6 +252,6 @@ locals {
 
 # This module provides a data map output to lookup naming standard references
 module "naming" {
-  source = "git::https://github.com/CLEAResult/cr-azurerm-naming.git?ref=v1.0.1"
+  source = "git::https://github.com/CLEAResult/cr-azurerm-naming.git?ref=v1.1.2"
 }
 
