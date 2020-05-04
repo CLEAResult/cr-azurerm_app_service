@@ -11,7 +11,6 @@ variable "location" {
 
 variable "plan" {
   type        = string
-  default     = ""
   description = "Full Azure App Service Plan resource ID."
 }
 
@@ -257,6 +256,6 @@ locals {
 
 # This module provides a data map output to lookup naming standard references
 module "naming" {
-  source = "git::https://github.com/CLEAResult/cr-azurerm-naming.git?ref=v1.1.2"
+  source = "git::https://github.com/CLEAResult/cr-azurerm-naming.git?ref=v1.1.3"
 }
 

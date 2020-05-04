@@ -1,5 +1,11 @@
 [Unreleased]
 
+[v1.7.4] - 2020-05-04
+
+Bug fixes:
+
+    - Fix errors caused by empty default plan value (#12)
+
 [v1.7.3, v1.5.2] - 2020-04-20
 
 New features:

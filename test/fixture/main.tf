@@ -20,7 +20,7 @@ provider "azuread" {
 }
 
 module "rg" {
-  source          = "git::https://github.com/clearesult/cr-azurerm_resource_group.git?ref=v1.2.2"
+  source          = "git::https://github.com/clearesult/cr-azurerm_resource_group.git?ref=v1.2.3"
   rgid            = var.rgid
   environment     = var.environment
   location        = var.location
