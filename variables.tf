@@ -122,7 +122,7 @@ variable "fx" {
 variable "fx_version" {
   type        = string
   default     = "7.2"
-  description = "Used for Linux web app framework selection - ignored on Windows web apps.  Valid values are dependent on the `fx` variable value. If `fx` is `php`, `fx_value` would need to be a supported Azure web app PHP version (ie: 7.2). Similar if `fx` is `node`. If `fx` is `docker`, `fx_version` should specify a valid container image name such as `appsvcsample/python-helloworld:latest`. Lastly, if `fx` is either `compose` or `kube`, `fx_version` should be a valid YAML configuration."
+  description = "Used for Linux web app framework selection - ignored on Windows web apps.  Valid values are dependent on the `fx` variable value. If `fx` is `php`, `fx_value` would need to be a supported Azure web app PHP version (ie: 7.2). Similar if `fx` is `node`. If `fx` is `docker`, `fx_version` should be an empty string (if setting the container externally) or specify a valid container image name such as `appsvcsample/python-helloworld:latest`. Lastly, if `fx` is either `compose` or `kube`, `fx_version` should be a valid YAML configuration."
 }
 
 variable "port" {
