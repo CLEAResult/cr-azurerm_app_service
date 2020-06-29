@@ -15,6 +15,23 @@ module "docker_appservice" {
   ip_restrictions = var.ip_restrictions
 }
 
+module "docker_appservice-empty-container" {
+  source          = "../.."
+  rg_name         = basename(module.rg.id)
+  rgid            = var.rgid
+  environment     = var.environment
+  location        = var.location
+  name_prefix     = format("%s0empty", random_string.test.result)
+  num             = 1
+  slot_num        = var.slot_num
+  plan            = azurerm_app_service_plan.linux.id
+  subscription_id = var.subscription_id
+  http2_enabled   = var.http2_enabled
+  fx              = "docker"
+  fx_version      = ""
+  ip_restrictions = var.ip_restrictions
+}
+
 module "compose_appservice" {
   source          = "../.."
   rg_name         = basename(module.rg.id)

@@ -1,5 +1,11 @@
 [Unreleased]
 
+[v1.7.5] - 2020-06-29
+
+Other:
+
+    - Minor variable documentation update
+
 [v1.7.4] - 2020-05-04
 
 Bug fixes:
