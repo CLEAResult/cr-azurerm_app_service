@@ -68,8 +68,8 @@ resource "azurerm_app_service" "app" {
     InfrastructureAsCode = "True"
   }, var.tags)
 }
-
-resource "azuread_group" "WebsiteContributor" {
+# commenting AD group creation and IAM permissions assignment code
+/*resource "azuread_group" "WebsiteContributor" {
   name = format("g%s%s%s_AZ_WebsiteContributor", local.default_rgid, local.env_id, local.rg_type)
 }
 
@@ -78,7 +78,8 @@ resource "azurerm_role_assignment" "WebsiteContributor" {
   role_definition_name = "Website Contributor"
   principal_id         = azuread_group.WebsiteContributor.id
 }
-
+*/
+  
 # Should support using plans in a different subscription from web app
 data "azurerm_app_service_plan" "app" {
   name                = local.plan_name
